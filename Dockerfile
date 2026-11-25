@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         dbus-x11 \
         nodejs \
         npm \
+        curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Playwright MCP server (lets an LLM drive a browser) + its Firefox build.
@@ -29,6 +30,11 @@ RUN chmod +x /usr/local/bin/start.sh && mkdir -p /var/log/firefox /config/mcp-us
 
 # 6080: noVNC (browser access), 5900: raw VNC, 3000: MCP server (SSE)
 EXPOSE 6080 5900 3000
+
+# Verify noVNC (Xvfb + websockify stack) and the MCP SSE endpoint are serving.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl -fsS -m 3 http://localhost:6080/ > /dev/null \
+        && curl -s -m 3 http://localhost:3000/sse | grep -q "event:"
 
 CMD ["/usr/local/bin/start.sh"]
 
