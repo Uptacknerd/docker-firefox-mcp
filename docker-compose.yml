@@ -8,8 +8,8 @@ services:
       - "5900:5900"   # raw VNC
       - "3000:3000"   # Playwright MCP server (SSE)
     environment:
-      - VNC_PASSWORD=
-      - VNC_GEOMETRY=1280x800x24
+      - VNC_PASSWORD=${VNC_PASSWORD}
+      - VNC_GEOMETRY=${VNC_GEOMETRY}
       - MCP_PORT=3000
       - MCP_HOST=0.0.0.0
     restart: unless-stopped

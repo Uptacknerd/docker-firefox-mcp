@@ -33,11 +33,13 @@ Xvfb "$DISPLAY" -screen 0 "$VNC_GEOMETRY" -ac +extension GLX +render -noreset &
 openbox &
 
 # VNC server
+VNC_AUTH=()
 if [ -n "$VNC_PASSWORD" ]; then
+    install -d -m 700 /root/.vnc
     x11vnc -storepasswd "$VNC_PASSWORD" /root/.vnc/passwd
-    VNC_AUTH="-rfbauth /root/.vnc/passwd"
+    VNC_AUTH=(-rfbauth /root/.vnc/passwd)
 fi
-x11vnc -display "$DISPLAY" -forever -shared -rfbport "$VNC_PORT" $VNC_AUTH &
+x11vnc -display "$DISPLAY" -forever -shared -rfbport "$VNC_PORT" "${VNC_AUTH[@]}" &
 
 # Firefox: restart automatically if closed by the user.
 # --wait keeps the launcher alive until the browser really exits,
